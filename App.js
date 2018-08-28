@@ -1,23 +1,46 @@
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+
+import Status from './components/Status';
 
 export default class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
-    );
-  }
+	renderMessageList() {
+		return <View style={styles.content} />;
+	}
+	renderInputMethodEditor() {
+		return <View style={styles.inputMethodEditor} />;
+	}
+	renderToolbar() {
+		return <View style={styles.toolbar} />;
+	}
+	render() {
+		return (
+			<View style={styles.container}>
+				<Status />
+				{this.renderMessageList()}
+				{this.renderToolbar()}
+				{this.renderInputMethodEditor()}
+			</View>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+	container: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+	content: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+	inputMethodEditor: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+	toolbar: {
+		borderTopWidth: 1,
+		borderTopColor: 'rgba(0,0,0,0.04)',
+		backgroundColor: 'white',
+	},
 });
