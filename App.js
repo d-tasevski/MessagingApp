@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View, Image, TouchableHighlight, BackHandler } from 'react-native';
 import React from 'react';
 
 import MessageList from './components/MessageList';
@@ -16,6 +16,42 @@ export default class App extends React.Component {
 				longitude: -122.4324,
 			}),
 		],
+		fullscreenImageId: null,
+	};
+
+	componentWillMount() {
+		this.subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+			const { fullscreenImageId } = this.state;
+			if (fullscreenImageId) {
+				this.dismissFullscreenImage();
+				return true;
+			}
+			return false;
+		});
+	}
+
+	componentWillUnmount() {
+		this.subscription.remove();
+	}
+
+	renderFullscreenImage = () => {
+		const { messages, fullscreenImageId } = this.state;
+		if (!fullscreenImageId) return null;
+		const image = messages.find(message => message.id === fullscreenImageId);
+		if (!image) return null;
+		const { uri } = image;
+		return (
+			<TouchableHighlight
+				style={styles.fullscreenOverlay}
+				onPress={this.dismissFullscreenImage}
+			>
+				<Image style={styles.fullscreenImage} source={{ uri }} />
+			</TouchableHighlight>
+		);
+	};
+
+	dismissFullscreenImage = () => {
+		this.setState({ fullscreenImageId: null });
 	};
 
 	handlePressMessage = ({ id, type }) => {
@@ -41,6 +77,9 @@ export default class App extends React.Component {
 						},
 					]
 				);
+				break;
+			case 'image':
+				this.setState({ fullscreenImageId: id });
 				break;
 			default:
 				break;
@@ -68,6 +107,7 @@ export default class App extends React.Component {
 				{this.renderMessageList()}
 				{this.renderToolbar()}
 				{this.renderInputMethodEditor()}
+				{this.renderFullscreenImage()}
 			</View>
 		);
 	}
@@ -90,5 +130,14 @@ const styles = StyleSheet.create({
 		borderTopWidth: 1,
 		borderTopColor: 'rgba(0,0,0,0.04)',
 		backgroundColor: 'white',
+	},
+	fullscreenOverlay: {
+		...StyleSheet.absoluteFillObject,
+		backgroundColor: 'black',
+		zIndex: 2,
+	},
+	fullscreenImage: {
+		flex: 1,
+		resizeMode: 'contain',
 	},
 });
