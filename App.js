@@ -3,6 +3,7 @@ import React from 'react';
 
 import MessageList from './components/MessageList';
 import Status from './components/Status';
+import Toolbar from './components/Toolbar';
 import { createImageMessage, createLocationMessage, createTextMessage } from './utils/MessageUtils';
 
 export default class App extends React.Component {
@@ -17,6 +18,7 @@ export default class App extends React.Component {
 			}),
 		],
 		fullscreenImageId: null,
+		isInputFocused: false,
 	};
 
 	componentWillMount() {
@@ -33,6 +35,32 @@ export default class App extends React.Component {
 	componentWillUnmount() {
 		this.subscription.remove();
 	}
+
+	handleChangeFocus = isFocused => {
+		this.setState({ isInputFocused: isFocused });
+	};
+
+	renderToolbar() {
+		const { isInputFocused } = this.state;
+		return (
+			<View style={styles.toolbar}>
+				<Toolbar
+					isFocused={isInputFocused}
+					onSubmit={this.handleSubmit}
+					onChangeFocus={this.handleChangeFocus}
+					onPressCamera={this.handlePressToolbarCamera}
+					onPressLocation={this.handlePressToolbarLocation}
+				/>{' '}
+			</View>
+		);
+	}
+
+	handleSubmit = text => {
+		const { messages } = this.state;
+		this.setState({
+			messages: [createTextMessage(text), ...messages],
+		});
+	};
 
 	renderFullscreenImage = () => {
 		const { messages, fullscreenImageId } = this.state;
@@ -79,7 +107,7 @@ export default class App extends React.Component {
 				);
 				break;
 			case 'image':
-				this.setState({ fullscreenImageId: id });
+				this.setState({ fullscreenImageId: id, isInputFocused: false });
 				break;
 			default:
 				break;
@@ -97,9 +125,7 @@ export default class App extends React.Component {
 	renderInputMethodEditor() {
 		return <View style={styles.inputMethodEditor} />;
 	}
-	renderToolbar() {
-		return <View style={styles.toolbar} />;
-	}
+
 	render() {
 		return (
 			<View style={styles.container}>
