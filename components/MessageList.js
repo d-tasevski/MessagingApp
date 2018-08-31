@@ -16,6 +16,24 @@ export default class MessageList extends React.Component {
 		onPressMessage: () => {},
 	};
 
+	handlePressToolbarLocation = () => {
+		const { messages } = this.state;
+		navigator.geolocation.getCurrentPosition(position => {
+			const {
+				coords: { latitude, longitude },
+			} = position;
+			this.setState({
+				messages: [
+					createLocationMessage({
+						latitude,
+						longitude,
+					}),
+					...messages,
+				],
+			});
+		});
+	};
+
 	renderMessageItem = ({ item }) => {
 		const { onPressMessage } = this.props;
 		return (
