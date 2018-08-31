@@ -4,6 +4,7 @@ import React from 'react';
 import MessageList from './components/MessageList';
 import Status from './components/Status';
 import Toolbar from './components/Toolbar';
+import ImageGrid from './components/ImageGrid';
 import { createImageMessage, createLocationMessage, createTextMessage } from './utils/MessageUtils';
 
 export default class App extends React.Component {
@@ -122,9 +123,19 @@ export default class App extends React.Component {
 			</View>
 		);
 	}
-	renderInputMethodEditor() {
-		return <View style={styles.inputMethodEditor} />;
-	}
+
+	handlePressImage = uri => {
+		const { messages } = this.state;
+		this.setState({
+			messages: [createImageMessage(uri), ...messages],
+		});
+	};
+
+	renderInputMethodEditor = () => (
+		<View style={styles.inputMethodEditor}>
+			<ImageGrid onPressImage={this.handlePressImage} />{' '}
+		</View>
+	);
 
 	render() {
 		return (
